@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../services/api_service.dart';
 import '../utils/image_picker_helper.dart';
+import 'package:flutter/foundation.dart';
 
 class CaptionScreen extends StatefulWidget {
   const CaptionScreen({super.key});
@@ -13,7 +14,7 @@ class CaptionScreen extends StatefulWidget {
 }
 
 class _CaptionScreenState extends State<CaptionScreen> {
-  File? _image;
+  XFile? _image;
   String _caption = "";
   bool _isLoading = false;
 
@@ -84,10 +85,13 @@ class _CaptionScreenState extends State<CaptionScreen> {
                       )
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.file(
-                          _image!,
-                          fit: BoxFit.contain,
-                        ),
+                        child: _image == null
+                            ? const Icon(Icons.image, size: 150)
+                            : kIsWeb
+                            ? Image.network(_image!.path)
+                            : Image.file(
+                              File(_image!.path),
+                            )
                       ),
               ),
             ),

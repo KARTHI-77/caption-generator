@@ -13,10 +13,24 @@ class ApiService {
     final request = http.MultipartRequest("POST", uri);
 
     request.files.add(
-      await http.MultipartFile.fromPath(
-        "image",
-        image.path,
-      ),
+      await http.if (kIsWeb) {
+  final bytes = await image.readAsBytes();
+
+  request.files.add(
+    http.MultipartFile.fromBytes(
+      'image',
+      bytes,
+      filename: image.name,
+    ),
+  );
+} else {
+  request.files.add(
+    await http.MultipartFile.fromPath(
+      'image',
+      image.path,
+    ),
+  );
+}
     );
 
     final response = await request.send();
