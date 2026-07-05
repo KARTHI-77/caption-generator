@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -12,26 +13,24 @@ class ApiService {
 
     final request = http.MultipartRequest("POST", uri);
 
-    request.files.add(
-      await http.if (kIsWeb) {
-  final bytes = await image.readAsBytes();
+    if (kIsWeb) {
+      final bytes = await image.readAsBytes();
 
-  request.files.add(
-    http.MultipartFile.fromBytes(
-      'image',
-      bytes,
-      filename: image.name,
-    ),
-  );
-} else {
-  request.files.add(
-    await http.MultipartFile.fromPath(
-      'image',
-      image.path,
-    ),
-  );
-}
-    );
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          bytes,
+          filename: image.path.split('/').last,
+        ),
+      );
+    } else {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          image.path,
+        ),
+      );
+    }
 
     final response = await request.send();
 

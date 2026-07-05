@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../services/api_service.dart';
 import '../utils/image_picker_helper.dart';
@@ -45,7 +46,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
     try {
       final caption =
-          await ApiService.generateCaption(_image!);
+          await ApiService.generateCaption(File(_image!.path));
 
       setState(() {
         _caption = caption;
