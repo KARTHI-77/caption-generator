@@ -38,6 +38,6 @@ class ApiService {
 
     final data = jsonDecode(res.body);
 
-    return data[0]["generated_text"];
+    return data["generated_text"];
   }
 }
