@@ -8,7 +8,6 @@ A Flutter application that generates captions for uploaded images using a Python
 - Generate AI-powered captions
 - Flutter frontend
 - Flask backend
-- Replicate API integration
 
 ## Project Structure
 
