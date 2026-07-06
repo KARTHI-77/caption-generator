@@ -33,12 +33,6 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Create a `.env` file inside the `backend` folder.
-
-```
-REPLICATE_API_KEY=your_api_key
-```
-
 Run the backend
 
 ```bash
