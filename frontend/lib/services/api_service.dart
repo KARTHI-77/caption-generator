@@ -1,14 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 class ApiService {
   static const String baseUrl = "http://127.0.0.1:5000";
   static const String endpoint = "$baseUrl/caption";
 
-  static Future<String> generateCaption(File image) async {
+  static Future<String> generateCaption(XFile image) async {
     final uri = Uri.parse(endpoint);
 
     final request = http.MultipartRequest("POST", uri);
@@ -18,15 +18,15 @@ class ApiService {
 
       request.files.add(
         http.MultipartFile.fromBytes(
-          'image',
+          "image",
           bytes,
-          filename: image.path.split('/').last,
+          filename: image.name,
         ),
       );
     } else {
       request.files.add(
         await http.MultipartFile.fromPath(
-          'image',
+          "image",
           image.path,
         ),
       );

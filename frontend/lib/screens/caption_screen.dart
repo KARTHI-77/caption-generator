@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../services/api_service.dart';
 import '../utils/image_picker_helper.dart';
-import 'package:flutter/foundation.dart';
 
 class CaptionScreen extends StatefulWidget {
   const CaptionScreen({super.key});
@@ -46,7 +43,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
     try {
       final caption =
-          await ApiService.generateCaption(File(_image!.path));
+          await ApiService.generateCaption(_image!);
 
       setState(() {
         _caption = caption;
@@ -86,13 +83,19 @@ class _CaptionScreenState extends State<CaptionScreen> {
                       )
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: _image == null
-                            ? const Icon(Icons.image, size: 150)
-                            : kIsWeb
-                            ? Image.network(_image!.path)
-                            : Image.file(
-                              File(_image!.path),
-                            )
+                        child: FutureBuilder(
+                          future: _image!.readAsBytes(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const CircularProgressIndicator();
+                            }
+
+                            return Image.memory(
+                              snapshot.data!,
+                              fit: BoxFit.contain,
+                            );
+                          },
+                        ),
                       ),
               ),
             ),
