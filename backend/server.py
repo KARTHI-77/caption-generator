@@ -1,23 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+from dotenv import load_dotenv
+from google import genai
 from PIL import Image
-from transformers import BlipProcessor, BlipForConditionalGeneration
+
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-print("Loading BLIP model... (first run may take several minutes)")
-
-processor = BlipProcessor.from_pretrained(
-    "Salesforce/blip-image-captioning-base"
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
 )
-
-model = BlipForConditionalGeneration.from_pretrained(
-    "Salesforce/blip-image-captioning-base"
-)
-
-print("BLIP model loaded successfully.")
 
 
 @app.route("/caption", methods=["POST"])
@@ -32,28 +29,21 @@ def caption():
                 }
             ), 400
 
-        image = request.files["image"]
+        image_file = request.files["image"]
 
-        pil_image = Image.open(image.stream).convert("RGB")
+        image = Image.open(image_file.stream)
 
-        inputs = processor(
-            images=pil_image,
-            return_tensors="pt",
-        )
-
-        output = model.generate(
-            **inputs,
-            max_new_tokens=30,
-        )
-
-        generated_caption = processor.decode(
-            output[0],
-            skip_special_tokens=True,
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[
+                "Describe this image with one detailed natural caption.",
+                image,
+            ],
         )
 
         return jsonify(
             {
-                "generated_text": generated_caption
+                "generated_text": response.text
             }
         )
 
@@ -64,7 +54,7 @@ def caption():
         return jsonify(
             {
                 "error": str(e)
-            }
+            },
         ), 500
 
 
