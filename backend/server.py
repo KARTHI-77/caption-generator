@@ -33,17 +33,35 @@ def caption():
 
         image = Image.open(image_file.stream)
 
+        prompt = """
+        You are an expert image caption generator.
+
+        Generate exactly ONE caption.
+
+        Rules:
+        - 6 to 12 words.
+        - Natural English.
+        - Mention the main subject.
+        - Mention the most important action if present.
+        - Keep it concise.
+        - Do not explain.
+        - Do not use quotation marks.
+        - Do not use bullet points.
+        - Return only the caption.
+        """
+
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=[
-                "Describe this image with one detailed natural caption.",
+                prompt,
                 image,
             ],
         )
-
+        
+        caption = response.text.strip().replace('"', "")
         return jsonify(
             {
-                "generated_text": response.text
+                "generated_text": caption
             }
         )
 

@@ -1,32 +1,21 @@
-# =========================
-# Flutter
-# =========================
-
-frontend/.dart_tool/
-frontend/build/
-frontend/.flutter-plugins
-frontend/.flutter-plugins-dependencies
-frontend/.packages
-frontend/.pub-cache/
-
-# IDE
-frontend/.idea/
-.vscode/
-
-# =========================
 # Python
-# =========================
-
-backend/venv/
+backend/.venv/
 backend/__pycache__/
+backend/.env
 backend/*.pyc
 
-# Environment file
-backend/.env
+# Flutter
+frontend/.dart_tool/
+frontend/build/
 
-# Uploads (optional)
-backend/uploads/
+# Android
+frontend/android/.gradle/
+frontend/android/local.properties
 
-# OS files
-.DS_Store
+# IDE
+.vscode/
+.idea/
+
+# OS
 Thumbs.db
+.DS_Store
