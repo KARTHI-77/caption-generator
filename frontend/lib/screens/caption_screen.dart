@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../services/api_service.dart';
 import '../utils/image_picker_helper.dart';
+import 'package:flutter/services.dart';
 
 class CaptionScreen extends StatefulWidget {
   const CaptionScreen({super.key});
@@ -59,6 +60,22 @@ class _CaptionScreenState extends State<CaptionScreen> {
         _isLoading = false;
       });
     }
+  }
+  Future<void> _copyCaption() async {
+   if (_caption.isEmpty) return;
+
+    await Clipboard.setData(
+      ClipboardData(text: _caption),
+    );
+
+   if (!mounted) return;
+
+   ScaffoldMessenger.of(context).showSnackBar(
+     const SnackBar(
+       content: Text("Caption copied to clipboard!"),
+       duration: Duration(seconds: 2),
+     ),
+   );
   }
 
   @override
@@ -143,6 +160,18 @@ class _CaptionScreenState extends State<CaptionScreen> {
                   ),
                 ),
               ),
+            if (!_isLoading && _caption.isNotEmpty)
+             Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: SizedBox(
+               width: double.infinity,
+               child: OutlinedButton.icon(
+                onPressed: _copyCaption,
+                icon: const Icon(Icons.copy),
+                label: const Text("Copy Caption"),
+               ),
+             ),
+            ),
 
             const SizedBox(height: 20),
           ],
