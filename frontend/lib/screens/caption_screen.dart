@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import '../services/api_service.dart';
 import '../utils/image_picker_helper.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CaptionScreen extends StatefulWidget {
   const CaptionScreen({super.key});
@@ -89,6 +90,19 @@ class _CaptionScreenState extends State<CaptionScreen> {
    );
   }
 
+  Future<void> _shareCaption() async {
+    if (_caption.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("No caption to share."),
+        ),
+      );
+      return;
+    }
+
+    await Share.share(_caption);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,6 +114,29 @@ class _CaptionScreenState extends State<CaptionScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+
+            DropdownButtonFormField<String>(
+              initialValue: _selectedStyle,
+              decoration: InputDecoration(
+                labelText: "Caption Style",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              items: _captionStyles.map((style) {
+                return DropdownMenuItem(
+                  value: style,
+                  child: Text(style),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedStyle = value!;
+                });
+              },
+            ),
+
+            const SizedBox(height: 20,),
 
             Expanded(
               child: Center(
@@ -127,33 +164,6 @@ class _CaptionScreenState extends State<CaptionScreen> {
                       ),
               ),
             ),
-
-            const SizedBox(height: 20),
-
-            DropdownButtonFormField<String>(
-              value: _selectedStyle,
-              decoration: InputDecoration(
-               labelText: "Caption Style",
-               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-               ),
-              ),
-            items: _captionStyles.map((style) {
-              return DropdownMenuItem(
-               value: style,
-               child: Text(style),
-              );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                 _selectedStyle = value!;
-              });
-            },
-        ),
-
-       const SizedBox(height: 20),
-
-            const SizedBox(height: 20),
 
             SizedBox(
               width: double.infinity,
@@ -197,17 +207,28 @@ class _CaptionScreenState extends State<CaptionScreen> {
                 ),
               ),
             if (!_isLoading && _caption.isNotEmpty)
-             Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: SizedBox(
-               width: double.infinity,
-               child: OutlinedButton.icon(
-                onPressed: _copyCaption,
-                icon: const Icon(Icons.copy),
-                label: const Text("Copy Caption"),
-               ),
-             ),
-            ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _copyCaption,
+                        icon: const Icon(Icons.copy),
+                        label: const Text("Copy"),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: _shareCaption,
+                        icon: const Icon(Icons.share),
+                        label: const Text("Share"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
             const SizedBox(height: 20),
           ],
