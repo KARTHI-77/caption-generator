@@ -30,25 +30,81 @@ def caption():
             ), 400
 
         image_file = request.files["image"]
+        style = request.form.get("style","Short & Crispy",)
 
         image = Image.open(image_file.stream)
 
-        prompt = """
-        You are an expert image caption generator.
+        PROMPTS = {
 
-        Generate exactly ONE caption.
+         "Short & Crispy":
+         """
+         Generate ONE short caption.
 
-        Rules:
-        - 6 to 12 words.
-        - Natural English.
-        - Mention the main subject.
-        - Mention the most important action if present.
-        - Keep it concise.
-        - Do not explain.
-        - Do not use quotation marks.
-        - Do not use bullet points.
-        - Return only the caption.
-        """
+         Maximum 10 words.
+
+         Return only the caption.
+        """,
+
+         "Instagram":
+         """
+         Generate an Instagram caption.
+
+         Maximum 20 words.
+
+         Catchy and engaging.
+
+         No hashtags.
+         """,
+
+         "Funny":
+         """
+         Generate a funny caption.
+
+         Maximum 15 words.
+
+         Keep it playful.
+         """,
+
+         "Professional":
+         """
+         Generate a professional caption.
+
+         Maximum 20 words.
+
+         Clear and polished.
+         """,
+
+         "Travel":
+         """
+         Generate a travel caption.
+
+         Maximum 15 words.
+
+         Inspiring and adventurous.
+         """,
+
+         "Motivational":
+         """
+         Generate a motivational caption.
+
+         Maximum 20 words.
+
+         Positive and inspiring.
+         """,
+
+         "Poetic":
+         """
+         Generate a poetic caption.
+
+         Maximum 20 words.
+
+         Elegant and expressive.
+         """,
+        }
+        prompt = PROMPTS.get(
+         style,
+         PROMPTS["Short & Crispy"],
+        )
 
         response = client.models.generate_content(
             model="gemini-2.5-flash",

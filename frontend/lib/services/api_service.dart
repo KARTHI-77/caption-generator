@@ -8,10 +8,11 @@ class ApiService {
   static const String baseUrl = "http://10.213.185.231:5000";
   static const String endpoint = "$baseUrl/caption";
 
-  static Future<String> generateCaption(XFile image) async {
+  static Future<String> generateCaption(XFile image, String style) async {
     final uri = Uri.parse(endpoint);
 
     final request = http.MultipartRequest("POST", uri);
+    request.fields["style"] = style;
 
     if (kIsWeb) {
       final bytes = await image.readAsBytes();

@@ -15,6 +15,17 @@ class CaptionScreen extends StatefulWidget {
 class _CaptionScreenState extends State<CaptionScreen> {
   XFile? _image;
   String _caption = "";
+  final List<String> _captionStyles = [
+   "Short & Crispy",
+   "Instagram",
+   "Funny",
+   "Professional",
+   "Travel",
+   "Motivational",
+   "Poetic",
+  ];
+ String _selectedStyle = "Short & Crispy";
+  
   bool _isLoading = false;
 
   Future<void> _pickImage() async {
@@ -44,7 +55,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
     try {
       final caption =
-          await ApiService.generateCaption(_image!);
+          await ApiService.generateCaption(_image!, _selectedStyle);
 
       setState(() {
         _caption = caption;
@@ -116,6 +127,31 @@ class _CaptionScreenState extends State<CaptionScreen> {
                       ),
               ),
             ),
+
+            const SizedBox(height: 20),
+
+            DropdownButtonFormField<String>(
+              value: _selectedStyle,
+              decoration: InputDecoration(
+               labelText: "Caption Style",
+               border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+               ),
+              ),
+            items: _captionStyles.map((style) {
+              return DropdownMenuItem(
+               value: style,
+               child: Text(style),
+              );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                 _selectedStyle = value!;
+              });
+            },
+        ),
+
+       const SizedBox(height: 20),
 
             const SizedBox(height: 20),
 
