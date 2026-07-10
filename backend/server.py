@@ -31,6 +31,7 @@ def caption():
 
         image_file = request.files["image"]
         style = request.form.get("style","Short & Crispy",)
+        language = request.form.get("language","English",)
 
         image = Image.open(image_file.stream)
 
@@ -101,10 +102,15 @@ def caption():
          Elegant and expressive.
          """,
         }
-        prompt = PROMPTS.get(
-         style,
-         PROMPTS["Short & Crispy"],
-        )
+        prompt = f"""
+         {PROMPTS[style]}
+
+         Generate the caption in {language}.
+
+         Return ONLY the caption.
+
+         Do not explain anything.
+         """
 
         response = client.models.generate_content(
             model="gemini-2.5-flash",
