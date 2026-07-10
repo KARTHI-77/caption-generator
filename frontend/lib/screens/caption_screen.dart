@@ -251,7 +251,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
                      child: OutlinedButton.icon(
                       onPressed: _copyCaption,
                       icon: const Icon(Icons.copy),
-                      label: const Text("Copy"),
+                      label: const Text(""),
                      ),
                     ),
 
@@ -261,7 +261,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
              child: ElevatedButton.icon(
               onPressed: _shareCaption,
               icon: const Icon(Icons.share),
-              label: const Text("Share"),
+              label: const Text(""),
              ),
             ),
 
@@ -273,7 +273,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
               ? null
               : _generateCaption,
               icon: const Icon(Icons.refresh),
-              label: const Text("Regenerate"),
+              label: const Text(""),
              ),
             ),
 
