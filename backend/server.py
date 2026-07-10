@@ -107,9 +107,15 @@ def caption():
 
          Generate the caption in {language}.
 
-         Return ONLY the caption.
+         Generate ONE caption.
 
-         Do not explain anything.
+         Every time this request is made, create a DIFFERENT caption.
+
+         Do not repeat previous captions.
+
+         Keep the same style.
+
+         Return only the caption..
          """
 
         response = client.models.generate_content(

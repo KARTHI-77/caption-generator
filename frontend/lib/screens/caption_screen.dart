@@ -211,16 +211,17 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
             const SizedBox(height: 12),
 
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _isLoading
-                    ? null
-                    : _generateCaption,
-                icon: const Icon(Icons.auto_awesome),
-                label: const Text("Generate Caption"),
+            if (_caption.isEmpty)
+             SizedBox(
+               width: double.infinity,
+               child: ElevatedButton.icon(
+                 onPressed: _isLoading
+                 ? null
+                 : _generateCaption,
+                 icon: const Icon(Icons.auto_awesome),
+                 label: const Text("Generate Caption"),
+                ),
               ),
-            ),
 
             const SizedBox(height: 25),
 
@@ -245,24 +246,39 @@ class _CaptionScreenState extends State<CaptionScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: Row(
-                  children: [
+                   children: [
                     Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _copyCaption,
-                        icon: const Icon(Icons.copy),
-                        label: const Text("Copy"),
-                      ),
+                     child: OutlinedButton.icon(
+                      onPressed: _copyCaption,
+                      icon: const Icon(Icons.copy),
+                      label: const Text("Copy"),
+                     ),
                     ),
+
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: _shareCaption,
-                        icon: const Icon(Icons.share),
-                        label: const Text("Share"),
-                      ),
-                    ),
-                  ],
-                ),
+
+            Expanded(
+             child: ElevatedButton.icon(
+              onPressed: _shareCaption,
+              icon: const Icon(Icons.share),
+              label: const Text("Share"),
+             ),
+            ),
+
+            const SizedBox(width: 12),
+
+            Expanded(
+             child: FilledButton.icon(
+              onPressed: _isLoading
+              ? null
+              : _generateCaption,
+              icon: const Icon(Icons.refresh),
+              label: const Text("Regenerate"),
+             ),
+            ),
+
+         ],
+        )
               ),
 
             const SizedBox(height: 20),
