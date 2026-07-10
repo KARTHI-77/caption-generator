@@ -29,6 +29,18 @@ class _CaptionScreenState extends State<CaptionScreen> {
   
   bool _isLoading = false;
 
+  final List<String> _languages = [
+   "English",
+   "Tamil",
+   "Hindi",
+   "French",
+   "Spanish",
+   "German",
+   "Japanese",
+  ];
+
+  String _selectedLanguage = "English";
+
   Future<void> _pickImage() async {
     final selectedImage = await ImagePickerHelper.pickImage();
 
@@ -56,7 +68,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
     try {
       final caption =
-          await ApiService.generateCaption(_image!, _selectedStyle);
+          await ApiService.generateCaption(_image!, _selectedStyle, _selectedLanguage);
 
       setState(() {
         _caption = caption;
@@ -137,6 +149,29 @@ class _CaptionScreenState extends State<CaptionScreen> {
             ),
 
             const SizedBox(height: 20,),
+
+            DropdownButtonFormField<String>(
+            value: _selectedLanguage,
+            decoration: InputDecoration(
+             labelText: "Language",
+             border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+             ),
+            ),
+            items: _languages.map((language) {
+              return DropdownMenuItem(
+               value: language,
+               child: Text(language),
+              );
+            }).toList(),
+            onChanged: (value) {
+             setState(() {
+              _selectedLanguage = value!;
+             });
+            },
+          ),
+
+          const SizedBox(height: 20),
 
             Expanded(
               child: Center(
