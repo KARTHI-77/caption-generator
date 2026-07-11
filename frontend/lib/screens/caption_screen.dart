@@ -103,16 +103,28 @@ class _CaptionScreenState extends State<CaptionScreen> {
   }
 
   Future<void> _shareCaption() async {
-    if (_caption.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("No caption to share."),
-        ),
+   if (_caption.isEmpty || _image == null) {
+     ScaffoldMessenger.of(context).showSnackBar(
+       const SnackBar(
+         content: Text("No image or caption to share."),
+       ),
       );
-      return;
+     return;
     }
 
-    await Share.share(_caption);
+   final bytes = await _image!.readAsBytes();
+
+   await Share.shareXFiles(
+     [
+       XFile.fromData(
+         bytes,
+         mimeType: "image/jpeg",
+         name: "caption_image.jpg",
+       ),
+     ],
+     text: _caption,
+     subject: "Generated Caption",
+   );
   }
 
   @override
@@ -151,7 +163,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
             const SizedBox(height: 20,),
 
             DropdownButtonFormField<String>(
-            value: _selectedLanguage,
+            initialValue: _selectedLanguage,
             decoration: InputDecoration(
              labelText: "Language",
              border: OutlineInputBorder(

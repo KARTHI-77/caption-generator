@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class ApiService {
-  static const String baseUrl = "http://10.213.185.231:5000";
+  static const String baseUrl = "http://10.79.40.231:5000";
   static const String endpoint = "$baseUrl/caption";
 
   static Future<String> generateCaption(XFile image, String style, String language) async {
