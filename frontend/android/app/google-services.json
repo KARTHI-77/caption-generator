@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1041483068387",
+    "project_id": "caption-generator-ai-f6d82",
+    "storage_bucket": "caption-generator-ai-f6d82.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041483068387:android:f1c541640d826a7afaa6d6",
+        "android_client_info": {
+          "package_name": "com.example.caption_generator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1041483068387-r6k877kvfbvtlea2d7kjpn8kp8t3rvlm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1GZPftiqfA3qTemTNCT_hzNwK5R0ZEns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1041483068387-r6k877kvfbvtlea2d7kjpn8kp8t3rvlm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
