@@ -4,6 +4,11 @@ import '../services/api_service.dart';
 import '../utils/image_picker_helper.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../models/caption_model.dart';
+import '../services/caption_firestore_service.dart';
+import 'history_screen.dart';
 
 class CaptionScreen extends StatefulWidget {
   const CaptionScreen({super.key});
@@ -72,6 +77,17 @@ class _CaptionScreenState extends State<CaptionScreen> {
       setState(() {
         _caption = caption;
       });
+      await CaptionFirestoreService.instance.saveCaption(
+        CaptionModel(
+         id: "",
+         caption: caption,
+         style: _selectedStyle,
+         language: _selectedLanguage,
+         imageUrl: "",
+         favorite: false,
+         createdAt: Timestamp.now(),
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -132,6 +148,19 @@ class _CaptionScreenState extends State<CaptionScreen> {
       appBar: AppBar(
         title: const Text("Caption Generator"),
         centerTitle: true,
+        actions: [
+          IconButton(
+           icon: const Icon(Icons.history),
+           onPressed: () {
+             Navigator.push(
+              context,
+               MaterialPageRoute(
+                builder: (_) => const HistoryScreen(),
+               ),
+             );
+           },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
