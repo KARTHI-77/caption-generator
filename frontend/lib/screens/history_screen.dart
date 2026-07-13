@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../services/caption_firestore_service.dart';
+import 'package:flutter/services.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
@@ -91,6 +92,96 @@ class HistoryScreen extends StatelessWidget {
                           color: Colors.grey.shade600,
                         ),
                       ),
+                      const SizedBox(height: 15),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+
+                         IconButton(
+                         tooltip: "Copy",
+                         icon: const Icon(Icons.copy),
+                         onPressed: () async {
+
+                          await Clipboard.setData(
+                            ClipboardData(
+                             text: data["caption"],
+                            ),
+                          );
+
+                          if (context.mounted) {
+                           ScaffoldMessenger.of(context).showSnackBar(
+                             const SnackBar(
+                               content: Text("Caption copied"),
+                             ),
+                           );
+                          }
+                        },
+                      ),
+
+                   IconButton(
+                     tooltip: "Delete",
+                     icon: const Icon(
+                       Icons.delete,
+                       color: Colors.red,
+                     ),
+                   onPressed: () async {
+
+                    final confirm =
+                    await showDialog<bool>(
+                     context: context,
+                     builder: (_) => AlertDialog(
+                      title: const Text("Delete Caption"),
+                      content: const Text(
+                      "Are you sure you want to delete this caption?",
+                    ),
+            actions: [
+
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    false,
+                  );
+                },
+                child: const Text("Cancel"),
+              ),
+
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    true,
+                  );
+                },
+                child: const Text("Delete"),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm == true) {
+
+          await CaptionFirestoreService.instance
+              .deleteCaption(
+            docs[index].id,
+          );
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "Caption deleted",
+                ),
+              ),
+            );
+          }
+        }
+      },
+    ),
+  ],
+),
                     ],
                   ),
                 ),

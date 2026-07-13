@@ -35,5 +35,16 @@ class CaptionFirestoreService {
       .orderBy("createdAt", descending: true)
       .snapshots();
   }
+
+  Future<void> deleteCaption(String documentId) async {
+    final uid = _auth.currentUser!.uid;
+
+    await _firestore
+      .collection("users")
+      .doc(uid)
+      .collection("captions")
+      .doc(documentId)
+      .delete();
+  }
 }
 
