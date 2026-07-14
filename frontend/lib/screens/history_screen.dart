@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../services/caption_firestore_service.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
@@ -116,6 +117,33 @@ class HistoryScreen extends StatelessWidget {
                              ),
                            );
                           }
+                        },
+                      ),
+                      IconButton(
+                       tooltip: "Share",
+                       icon: const Icon(Icons.share),
+                       onPressed: () async {
+                          await Share.share(
+                           data["caption"] ?? "",
+                           subject: "AI Generated Caption",
+                          );
+                        },
+                      ),
+                      IconButton(
+                        tooltip: "Favorite",
+                        icon: Icon(
+                          data["favorite"] == true
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                          color: Colors.red,
+                        ),
+                        onPressed: () async {
+
+                         await CaptionFirestoreService.instance
+                          .toggleFavorite(
+                           docs[index].id,
+                           data["favorite"] ?? false,
+                          );
                         },
                       ),
 

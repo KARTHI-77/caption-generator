@@ -46,5 +46,21 @@ class CaptionFirestoreService {
       .doc(documentId)
       .delete();
   }
+  Future<void> toggleFavorite(
+    String documentId,
+    bool currentValue,
+  ) async {
+
+     final uid = _auth.currentUser!.uid;
+
+     await _firestore
+      .collection("users")
+      .doc(uid)
+      .collection("captions")
+      .doc(documentId)
+      .update({
+    "favorite": !currentValue,
+   });
+  }
 }
 
