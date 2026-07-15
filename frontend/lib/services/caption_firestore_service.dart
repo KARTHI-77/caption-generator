@@ -62,5 +62,52 @@ class CaptionFirestoreService {
     "favorite": !currentValue,
    });
   }
+
+  Future<Map<String, dynamic>> getProfileStats() async {
+   final uid = _auth.currentUser!.uid;
+
+   final snapshot = await _firestore
+      .collection("users")
+      .doc(uid)
+      .collection("captions")
+      .get();
+
+   final docs = snapshot.docs;
+
+   final totalCaptions = docs.length;
+
+   final favoriteCount =
+       docs.where((doc) => doc["favorite"] == true).length;
+
+   final languages = <String>{};
+   final styleCount = <String, int>{};
+
+   for (final doc in docs) {
+     final language = doc["language"] as String? ?? "";
+     final style = doc["style"] as String? ?? "";
+
+      if (language.isNotEmpty) {
+       languages.add(language);
+      }
+
+      if (style.isNotEmpty) {
+       styleCount[style] = (styleCount[style] ?? 0) + 1;
+      }
+    }
+
+   String mostUsedStyle = "-";
+   if (styleCount.isNotEmpty) {
+     mostUsedStyle = styleCount.entries
+         .reduce((a, b) => a.value >= b.value ? a : b)
+         .key;
+   }
+
+    return {
+     "totalCaptions": totalCaptions,
+     "favoriteCount": favoriteCount,
+     "languageCount": languages.length,
+     "mostUsedStyle": mostUsedStyle,
+    };
+  }
 }
 

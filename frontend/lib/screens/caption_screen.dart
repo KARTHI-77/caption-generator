@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/caption_model.dart';
 import '../services/caption_firestore_service.dart';
-import 'history_screen.dart';
+import 'profile_screen.dart';
 
 class CaptionScreen extends StatefulWidget {
   const CaptionScreen({super.key});
@@ -150,15 +150,19 @@ class _CaptionScreenState extends State<CaptionScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-           icon: const Icon(Icons.history),
+           icon: const Icon(Icons.person),
+
            onPressed: () {
+
              Navigator.push(
-              context,
+               context,
+
                MaterialPageRoute(
-                builder: (_) => const HistoryScreen(),
+                 builder: (_) =>
+                 const ProfileScreen(),
                ),
-             );
-           },
+              );
+            },
           ),
         ],
       ),
