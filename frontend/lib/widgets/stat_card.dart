@@ -31,18 +31,27 @@ class StatCard extends StatelessWidget {
             const SizedBox(height: 10),
 
             Text(
-              value,
+             value,
+             textAlign: TextAlign.center,
+             maxLines: 2,
+             overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+               fontSize: 22,
+               fontWeight: FontWeight.bold,
+               height: 1.2,
               ),
             ),
 
             const SizedBox(height: 6),
 
             Text(
-              title,
-              textAlign: TextAlign.center,
+             title,
+             textAlign: TextAlign.center,
+             maxLines: 1,
+             overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 15,
+              ),
             ),
           ],
         ),
