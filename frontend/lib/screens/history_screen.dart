@@ -12,24 +12,16 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Caption History"),
-      ),
+      appBar: AppBar(title: const Text("Caption History")),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: CaptionFirestoreService.instance.getCaptionHistory(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                "Error: ${snapshot.error}",
-              ),
-            );
+            return Center(child: Text("Error: ${snapshot.error}"));
           }
 
           final docs = snapshot.data?.docs ?? [];
@@ -57,7 +49,6 @@ class HistoryScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       Text(
                         data["caption"] ?? "",
                         style: const TextStyle(
@@ -70,146 +61,116 @@ class HistoryScreen extends StatelessWidget {
 
                       Row(
                         children: [
-
-                          Chip(
-                            label: Text(data["style"] ?? ""),
-                          ),
+                          Chip(label: Text(data["style"] ?? "")),
 
                           const SizedBox(width: 8),
 
-                          Chip(
-                            label: Text(data["language"] ?? ""),
-                          ),
+                          Chip(label: Text(data["language"] ?? "")),
                         ],
                       ),
 
                       const SizedBox(height: 10),
 
                       Text(
-                        DateFormat("dd MMM yyyy • hh:mm a").format(
-                          (data["createdAt"] as Timestamp).toDate(),
-                        ),
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                        ),
+                        DateFormat(
+                          "dd MMM yyyy • hh:mm a",
+                        ).format((data["createdAt"] as Timestamp).toDate()),
+                        style: TextStyle(color: Colors.grey.shade600),
                       ),
                       const SizedBox(height: 15),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          IconButton(
+                            tooltip: "Copy",
+                            icon: const Icon(Icons.copy),
+                            onPressed: () async {
+                              await Clipboard.setData(
+                                ClipboardData(text: data["caption"]),
+                              );
 
-                         IconButton(
-                         tooltip: "Copy",
-                         icon: const Icon(Icons.copy),
-                         onPressed: () async {
-
-                          await Clipboard.setData(
-                            ClipboardData(
-                             text: data["caption"],
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Caption copied"),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          IconButton(
+                            tooltip: "Share",
+                            icon: const Icon(Icons.share),
+                            onPressed: () async {
+                              await Share.share(
+                                data["caption"] ?? "",
+                                subject: "AI Generated Caption",
+                              );
+                            },
+                          ),
+                          IconButton(
+                            tooltip: "Favorite",
+                            icon: Icon(
+                              data["favorite"] == true
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: Colors.red,
                             ),
-                          );
+                            onPressed: () async {
+                              await CaptionFirestoreService.instance
+                                  .toggleFavorite(
+                                    docs[index].id,
+                                    data["favorite"] ?? false,
+                                  );
+                            },
+                          ),
 
-                          if (context.mounted) {
-                           ScaffoldMessenger.of(context).showSnackBar(
-                             const SnackBar(
-                               content: Text("Caption copied"),
-                             ),
-                           );
-                          }
-                        },
+                          IconButton(
+                            tooltip: "Delete",
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: const Text("Delete Caption"),
+                                  content: const Text(
+                                    "Are you sure you want to delete this caption?",
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+                                      child: const Text("Cancel"),
+                                    ),
+
+                                    FilledButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, true);
+                                      },
+                                      child: const Text("Delete"),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirm == true) {
+                                await CaptionFirestoreService.instance
+                                    .deleteCaption(docs[index].id);
+
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Caption deleted"),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                      IconButton(
-                       tooltip: "Share",
-                       icon: const Icon(Icons.share),
-                       onPressed: () async {
-                          await Share.share(
-                           data["caption"] ?? "",
-                           subject: "AI Generated Caption",
-                          );
-                        },
-                      ),
-                      IconButton(
-                        tooltip: "Favorite",
-                        icon: Icon(
-                          data["favorite"] == true
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                          color: Colors.red,
-                        ),
-                        onPressed: () async {
-
-                         await CaptionFirestoreService.instance
-                          .toggleFavorite(
-                           docs[index].id,
-                           data["favorite"] ?? false,
-                          );
-                        },
-                      ),
-
-                   IconButton(
-                     tooltip: "Delete",
-                     icon: const Icon(
-                       Icons.delete,
-                       color: Colors.red,
-                     ),
-                   onPressed: () async {
-
-                    final confirm =
-                    await showDialog<bool>(
-                     context: context,
-                     builder: (_) => AlertDialog(
-                      title: const Text("Delete Caption"),
-                      content: const Text(
-                      "Are you sure you want to delete this caption?",
-                    ),
-            actions: [
-
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(
-                    context,
-                    false,
-                  );
-                },
-                child: const Text("Cancel"),
-              ),
-
-              FilledButton(
-                onPressed: () {
-                  Navigator.pop(
-                    context,
-                    true,
-                  );
-                },
-                child: const Text("Delete"),
-              ),
-            ],
-          ),
-        );
-
-        if (confirm == true) {
-
-          await CaptionFirestoreService.instance
-              .deleteCaption(
-            docs[index].id,
-          );
-
-          if (context.mounted) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(
-              const SnackBar(
-                content: Text(
-                  "Caption deleted",
-                ),
-              ),
-            );
-          }
-        }
-      },
-    ),
-  ],
-),
                     ],
                   ),
                 ),
