@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/caption_model.dart';
 import '../services/caption_firestore_service.dart';
 import 'profile_screen.dart';
+import '../models/caption_response.dart';
 
 class CaptionScreen extends StatefulWidget {
   const CaptionScreen({super.key});
@@ -20,27 +21,28 @@ class CaptionScreen extends StatefulWidget {
 class _CaptionScreenState extends State<CaptionScreen> {
   XFile? _image;
   String _caption = "";
+  List<String> _hashtags = [];
   final List<String> _captionStyles = [
-   "Short & Crispy",
-   "Instagram",
-   "Funny",
-   "Professional",
-   "Travel",
-   "Motivational",
-   "Poetic",
+    "Short & Crispy",
+    "Instagram",
+    "Funny",
+    "Professional",
+    "Travel",
+    "Motivational",
+    "Poetic",
   ];
- String _selectedStyle = "Short & Crispy";
-  
+  String _selectedStyle = "Short & Crispy";
+
   bool _isLoading = false;
 
   final List<String> _languages = [
-   "English",
-   "Tamil",
-   "Hindi",
-   "French",
-   "Spanish",
-   "German",
-   "Japanese",
+    "English",
+    "Tamil",
+    "Hindi",
+    "French",
+    "Spanish",
+    "German",
+    "Japanese",
   ];
 
   String _selectedLanguage = "English";
@@ -52,6 +54,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
       setState(() {
         _image = selectedImage;
         _caption = "";
+        _hashtags = [];
       });
     }
   }
@@ -59,9 +62,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
   Future<void> _generateCaption() async {
     if (_image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please select an image first."),
-        ),
+        const SnackBar(content: Text("Please select an image first.")),
       );
       return;
     }
@@ -71,75 +72,74 @@ class _CaptionScreenState extends State<CaptionScreen> {
     });
 
     try {
-      final caption =
-          await ApiService.generateCaption(_image!, _selectedStyle, _selectedLanguage);
+      final response = await ApiService.generateCaption(
+        _image!,
+        _selectedStyle,
+        _selectedLanguage,
+      );
 
       setState(() {
-        _caption = caption;
+        _caption = response.caption;
+        _hashtags = response.hashtags;
       });
       await CaptionFirestoreService.instance.saveCaption(
         CaptionModel(
-         id: "",
-         caption: caption,
-         style: _selectedStyle,
-         language: _selectedLanguage,
-         imageUrl: "",
-         favorite: false,
-         createdAt: Timestamp.now(),
+          id: "",
+          caption: _caption,
+          style: _selectedStyle,
+          language: _selectedLanguage,
+          imageUrl: "",
+          favorite: false,
+          createdAt: Timestamp.now(),
         ),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error: $e"),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
   }
+
   Future<void> _copyCaption() async {
-   if (_caption.isEmpty) return;
+    if (_caption.isEmpty) return;
 
-    await Clipboard.setData(
-      ClipboardData(text: _caption),
+    await Clipboard.setData(ClipboardData(text: _caption));
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Caption copied to clipboard!"),
+        duration: Duration(seconds: 2),
+      ),
     );
-
-   if (!mounted) return;
-
-   ScaffoldMessenger.of(context).showSnackBar(
-     const SnackBar(
-       content: Text("Caption copied to clipboard!"),
-       duration: Duration(seconds: 2),
-     ),
-   );
   }
 
   Future<void> _shareCaption() async {
-   if (_caption.isEmpty || _image == null) {
-     ScaffoldMessenger.of(context).showSnackBar(
-       const SnackBar(
-         content: Text("No image or caption to share."),
-       ),
+    if (_caption.isEmpty || _image == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No image or caption to share.")),
       );
-     return;
+      return;
     }
 
-   final bytes = await _image!.readAsBytes();
+    final bytes = await _image!.readAsBytes();
 
-   await Share.shareXFiles(
-     [
-       XFile.fromData(
-         bytes,
-         mimeType: "image/jpeg",
-         name: "caption_image.jpg",
-       ),
-     ],
-     text: _caption,
-     subject: "Generated Caption",
-   );
+    await Share.shareXFiles(
+      [
+        XFile.fromData(
+          bytes,
+          mimeType: "image/jpeg",
+          name: "caption_image.jpg",
+        ),
+      ],
+      text: _caption,
+      subject: "Generated Caption",
+    );
   }
 
   @override
@@ -150,17 +150,13 @@ class _CaptionScreenState extends State<CaptionScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-           icon: const Icon(Icons.person),
+            icon: const Icon(Icons.person),
 
-           onPressed: () {
+            onPressed: () {
+              Navigator.push(
+                context,
 
-             Navigator.push(
-               context,
-
-               MaterialPageRoute(
-                 builder: (_) =>
-                 const ProfileScreen(),
-               ),
+                MaterialPageRoute(builder: (_) => const ProfileScreen()),
               );
             },
           ),
@@ -170,7 +166,6 @@ class _CaptionScreenState extends State<CaptionScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-
             DropdownButtonFormField<String>(
               initialValue: _selectedStyle,
               decoration: InputDecoration(
@@ -180,10 +175,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
                 ),
               ),
               items: _captionStyles.map((style) {
-                return DropdownMenuItem(
-                  value: style,
-                  child: Text(style),
-                );
+                return DropdownMenuItem(value: style, child: Text(style));
               }).toList(),
               onChanged: (value) {
                 setState(() {
@@ -192,39 +184,32 @@ class _CaptionScreenState extends State<CaptionScreen> {
               },
             ),
 
-            const SizedBox(height: 20,),
+            const SizedBox(height: 20),
 
             DropdownButtonFormField<String>(
-            initialValue: _selectedLanguage,
-            decoration: InputDecoration(
-             labelText: "Language",
-             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-             ),
+              initialValue: _selectedLanguage,
+              decoration: InputDecoration(
+                labelText: "Language",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              items: _languages.map((language) {
+                return DropdownMenuItem(value: language, child: Text(language));
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedLanguage = value!;
+                });
+              },
             ),
-            items: _languages.map((language) {
-              return DropdownMenuItem(
-               value: language,
-               child: Text(language),
-              );
-            }).toList(),
-            onChanged: (value) {
-             setState(() {
-              _selectedLanguage = value!;
-             });
-            },
-          ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             Expanded(
               child: Center(
                 child: _image == null
-                    ? const Icon(
-                        Icons.image,
-                        size: 150,
-                        color: Colors.grey,
-                      )
+                    ? const Icon(Icons.image, size: 150, color: Colors.grey)
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: FutureBuilder(
@@ -256,21 +241,18 @@ class _CaptionScreenState extends State<CaptionScreen> {
             const SizedBox(height: 12),
 
             if (_caption.isEmpty)
-             SizedBox(
-               width: double.infinity,
-               child: ElevatedButton.icon(
-                 onPressed: _isLoading
-                 ? null
-                 : _generateCaption,
-                 icon: const Icon(Icons.auto_awesome),
-                 label: const Text("Generate Caption"),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _isLoading ? null : _generateCaption,
+                  icon: const Icon(Icons.auto_awesome),
+                  label: const Text("Generate Caption"),
                 ),
               ),
 
             const SizedBox(height: 25),
 
-            if (_isLoading)
-              const CircularProgressIndicator(),
+            if (_isLoading) const CircularProgressIndicator(),
 
             if (!_isLoading && _caption.isNotEmpty)
               Card(
@@ -279,10 +261,40 @@ class _CaptionScreenState extends State<CaptionScreen> {
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     _caption,
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
+                    style: const TextStyle(fontSize: 18),
                     textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            if (_hashtags.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Card(
+                  elevation: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Hashtags",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: _hashtags.map((tag) {
+                            return Chip(label: Text(tag));
+                          }).toList(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -290,39 +302,36 @@ class _CaptionScreenState extends State<CaptionScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: Row(
-                   children: [
+                  children: [
                     Expanded(
-                     child: OutlinedButton.icon(
-                      onPressed: _copyCaption,
-                      icon: const Icon(Icons.copy),
-                      label: const Text(""),
-                     ),
+                      child: OutlinedButton.icon(
+                        onPressed: _copyCaption,
+                        icon: const Icon(Icons.copy),
+                        label: const Text(""),
+                      ),
                     ),
 
                     const SizedBox(width: 12),
 
-            Expanded(
-             child: ElevatedButton.icon(
-              onPressed: _shareCaption,
-              icon: const Icon(Icons.share),
-              label: const Text(""),
-             ),
-            ),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: _shareCaption,
+                        icon: const Icon(Icons.share),
+                        label: const Text(""),
+                      ),
+                    ),
 
-            const SizedBox(width: 12),
+                    const SizedBox(width: 12),
 
-            Expanded(
-             child: FilledButton.icon(
-              onPressed: _isLoading
-              ? null
-              : _generateCaption,
-              icon: const Icon(Icons.refresh),
-              label: const Text(""),
-             ),
-            ),
-
-         ],
-        )
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: _isLoading ? null : _generateCaption,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text(""),
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
             const SizedBox(height: 20),

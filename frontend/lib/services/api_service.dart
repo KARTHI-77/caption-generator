@@ -3,12 +3,17 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import '../models/caption_response.dart';
 
 class ApiService {
   static const String baseUrl = "http://10.79.40.231:5000";
   static const String endpoint = "$baseUrl/caption";
 
-  static Future<String> generateCaption(XFile image, String style, String language) async {
+  static Future<CaptionResponse> generateCaption(
+    XFile image,
+    String style,
+    String language,
+  ) async {
     final uri = Uri.parse(endpoint);
 
     final request = http.MultipartRequest("POST", uri);
@@ -19,19 +24,10 @@ class ApiService {
       final bytes = await image.readAsBytes();
 
       request.files.add(
-        http.MultipartFile.fromBytes(
-          "image",
-          bytes,
-          filename: image.name,
-        ),
+        http.MultipartFile.fromBytes("image", bytes, filename: image.name),
       );
     } else {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          "image",
-          image.path,
-        ),
-      );
+      request.files.add(await http.MultipartFile.fromPath("image", image.path));
     }
 
     final response = await request.send();
@@ -40,6 +36,6 @@ class ApiService {
 
     final data = jsonDecode(res.body);
 
-    return data["generated_text"];
+    return CaptionResponse.fromJson(data);
   }
 }
