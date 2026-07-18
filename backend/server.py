@@ -127,11 +127,46 @@ def caption():
         )
         
         caption = response.text.strip().replace('"', "")
-        return jsonify(
-            {
-                "generated_text": caption
+
+        import re
+
+        def generate_hashtags(caption: str):
+            """
+            Generate simple hashtags from a caption.
+            """
+
+            words = re.findall(r"[A-Za-z]+", caption)
+
+            stop_words = {
+                "the", "a", "an", "and", "of", "to", "in",
+                "on", "at", "for", "is", "are", "was", "were",
+                "with", "this", "that", "your", "my", "our",
+                "their", "it", "its", "be", "as"
             }
-        )
+
+            hashtags = []
+            for word in words:
+                clean = word.strip().capitalize()
+
+                if len(clean) < 3:
+                    continue
+
+                if clean.lower() in stop_words:
+                    continue
+
+                tag = f"#{clean}"
+
+                if tag not in hashtags:
+                    hashtags.append(tag)
+
+            return hashtags[:8]
+
+        hashtags = generate_hashtags(caption)
+
+        return jsonify({
+          "generated_text": caption,
+          "hashtags": hashtags,
+        })
 
     except Exception as e:
 
