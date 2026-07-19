@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CaptionModel {
   final String id;
   final String caption;
+  final List<String> hashtags;
   final String style;
   final String language;
   final String imageUrl;
@@ -12,6 +13,7 @@ class CaptionModel {
   CaptionModel({
     required this.id,
     required this.caption,
+    required this.hashtags,
     required this.style,
     required this.language,
     required this.imageUrl,
@@ -22,6 +24,7 @@ class CaptionModel {
   Map<String, dynamic> toMap() {
     return {
       "caption": caption,
+      "hashtags": hashtags,
       "style": style,
       "language": language,
       "imageUrl": imageUrl,
@@ -37,6 +40,7 @@ class CaptionModel {
     return CaptionModel(
       id: id,
       caption: map["caption"] ?? "",
+      hashtags: List<String>.from(map["hashtags"] ?? []),
       style: map["style"] ?? "",
       language: map["language"] ?? "",
       imageUrl: map["imageUrl"] ?? "",

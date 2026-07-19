@@ -9,7 +9,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/caption_model.dart';
 import '../services/caption_firestore_service.dart';
 import 'profile_screen.dart';
-import '../models/caption_response.dart';
 
 class CaptionScreen extends StatefulWidget {
   const CaptionScreen({super.key});
@@ -86,6 +85,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
         CaptionModel(
           id: "",
           caption: _caption,
+          hashtags: _hashtags,
           style: _selectedStyle,
           language: _selectedLanguage,
           imageUrl: "",
