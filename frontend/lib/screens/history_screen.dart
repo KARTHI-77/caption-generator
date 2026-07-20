@@ -57,6 +57,18 @@ class HistoryScreen extends StatelessWidget {
                         ),
                       ),
 
+                      if ((data["hashtags"] as List?)?.isNotEmpty ?? false) ...[
+                        const SizedBox(height: 12),
+
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: (data["hashtags"] as List)
+                              .map((tag) => Chip(label: Text(tag.toString())))
+                              .toList(),
+                        ),
+                      ],
+
                       const SizedBox(height: 15),
 
                       Row(
@@ -86,8 +98,16 @@ class HistoryScreen extends StatelessWidget {
                             tooltip: "Copy",
                             icon: const Icon(Icons.copy),
                             onPressed: () async {
+                              final hashtags =
+                                  (data["hashtags"] as List?)
+                                      ?.map((e) => e.toString())
+                                      .join(" ") ??
+                                  "";
+
                               await Clipboard.setData(
-                                ClipboardData(text: data["caption"]),
+                                ClipboardData(
+                                  text: "${data["caption"]}\n\n$hashtags",
+                                ),
                               );
 
                               if (context.mounted) {
@@ -103,8 +123,14 @@ class HistoryScreen extends StatelessWidget {
                             tooltip: "Share",
                             icon: const Icon(Icons.share),
                             onPressed: () async {
+                              final hashtags =
+                                  (data["hashtags"] as List?)
+                                      ?.map((e) => e.toString())
+                                      .join(" ") ??
+                                  "";
+
                               await Share.share(
-                                data["caption"] ?? "",
+                                "${data["caption"]}\n\n$hashtags",
                                 subject: "AI Generated Caption",
                               );
                             },
