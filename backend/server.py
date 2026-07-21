@@ -1,3 +1,5 @@
+import re
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -128,7 +130,31 @@ def caption():
         
         caption = response.text.strip().replace('"', "")
 
-        import re
+        def generate_emojis(caption: str):
+            """
+            Generate 3-5 relevant emojis for a caption using Gemini.
+            """
+
+            emoji_response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=f"""
+                Caption:
+                {caption}
+
+                Generate ONLY 3 to 5 emojis that best match this caption.
+
+                Rules:
+                - Return emojis only.
+                - No words.
+                - No numbering.
+                - Separate emojis with spaces.
+
+                Example:
+                🌅 ✨ ❤️ 📸
+                """,
+            )
+            emoji_text = emoji_response.text.strip()
+            return emoji_text.split()
 
         def generate_hashtags(caption: str):
             """
@@ -162,10 +188,12 @@ def caption():
             return hashtags[:8]
 
         hashtags = generate_hashtags(caption)
+        emojis = generate_emojis(caption)
 
         return jsonify({
-          "generated_text": caption,
-          "hashtags": hashtags,
+         "generated_text": caption,
+         "hashtags": hashtags,
+         "emojis": emojis,
         })
 
     except Exception as e:
