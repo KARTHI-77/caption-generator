@@ -107,7 +107,19 @@ class _CaptionScreenState extends State<CaptionScreen> {
   Future<void> _copyCaption() async {
     if (_caption.isEmpty) return;
 
-    await Clipboard.setData(ClipboardData(text: _caption));
+    final textToCopy = [
+      _caption,
+      if (_hashtags.isNotEmpty) "",
+      if (_hashtags.isNotEmpty) _hashtags.join(" "),
+    ].join("\n");
+
+    await Clipboard.setData(ClipboardData(text: textToCopy));
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Caption copied")));
+    }
 
     if (!mounted) return;
 
@@ -127,19 +139,15 @@ class _CaptionScreenState extends State<CaptionScreen> {
       return;
     }
 
-    final bytes = await _image!.readAsBytes();
+    await _image!.readAsBytes();
 
-    await Share.shareXFiles(
-      [
-        XFile.fromData(
-          bytes,
-          mimeType: "image/jpeg",
-          name: "caption_image.jpg",
-        ),
-      ],
-      text: _caption,
-      subject: "Generated Caption",
-    );
+    final textToShare = [
+      _caption,
+      if (_hashtags.isNotEmpty) "",
+      if (_hashtags.isNotEmpty) _hashtags.join(" "),
+    ].join("\n");
+
+    await Share.share(textToShare, subject: "AI Generated Caption");
   }
 
   @override
