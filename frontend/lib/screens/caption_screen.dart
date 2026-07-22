@@ -21,6 +21,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
   XFile? _image;
   String _caption = "";
   List<String> _hashtags = [];
+  List<String> _emojis = [];
   final List<String> _captionStyles = [
     "Short & Crispy",
     "Instagram",
@@ -54,6 +55,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
         _image = selectedImage;
         _caption = "";
         _hashtags = [];
+        _emojis = [];
       });
     }
   }
@@ -80,6 +82,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
       setState(() {
         _caption = response.caption;
         _hashtags = response.hashtags;
+        _emojis = response.emojis;
       });
       await CaptionFirestoreService.instance.saveCaption(
         CaptionModel(
@@ -111,6 +114,8 @@ class _CaptionScreenState extends State<CaptionScreen> {
       _caption,
       if (_hashtags.isNotEmpty) "",
       if (_hashtags.isNotEmpty) _hashtags.join(" "),
+      if (_emojis.isNotEmpty) "",
+      if (_emojis.isNotEmpty) _emojis.join(" "),
     ].join("\n");
 
     await Clipboard.setData(ClipboardData(text: textToCopy));
@@ -145,6 +150,8 @@ class _CaptionScreenState extends State<CaptionScreen> {
       _caption,
       if (_hashtags.isNotEmpty) "",
       if (_hashtags.isNotEmpty) _hashtags.join(" "),
+      if (_emojis.isNotEmpty) "",
+      if (_emojis.isNotEmpty) _emojis.join(" "),
     ].join("\n");
 
     await Share.share(textToShare, subject: "AI Generated Caption");
@@ -170,180 +177,217 @@ class _CaptionScreenState extends State<CaptionScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            DropdownButtonFormField<String>(
-              initialValue: _selectedStyle,
-              decoration: InputDecoration(
-                labelText: "Caption Style",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              DropdownButtonFormField<String>(
+                initialValue: _selectedStyle,
+                decoration: InputDecoration(
+                  labelText: "Caption Style",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
+                items: _captionStyles.map((style) {
+                  return DropdownMenuItem(value: style, child: Text(style));
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedStyle = value!;
+                  });
+                },
               ),
-              items: _captionStyles.map((style) {
-                return DropdownMenuItem(value: style, child: Text(style));
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedStyle = value!;
-                });
-              },
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            DropdownButtonFormField<String>(
-              initialValue: _selectedLanguage,
-              decoration: InputDecoration(
-                labelText: "Language",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+              DropdownButtonFormField<String>(
+                initialValue: _selectedLanguage,
+                decoration: InputDecoration(
+                  labelText: "Language",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
+                items: _languages.map((language) {
+                  return DropdownMenuItem(
+                    value: language,
+                    child: Text(language),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedLanguage = value!;
+                  });
+                },
               ),
-              items: _languages.map((language) {
-                return DropdownMenuItem(value: language, child: Text(language));
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedLanguage = value!;
-                });
-              },
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            Expanded(
-              child: Center(
-                child: _image == null
-                    ? const Icon(Icons.image, size: 150, color: Colors.grey)
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: FutureBuilder(
-                          future: _image!.readAsBytes(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return const CircularProgressIndicator();
-                            }
+              SizedBox(
+                height: 250,
+                child: Center(
+                  child: _image == null
+                      ? const Icon(Icons.image, size: 150, color: Colors.grey)
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: FutureBuilder(
+                            future: _image!.readAsBytes(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const CircularProgressIndicator();
+                              }
 
-                            return Image.memory(
-                              snapshot.data!,
-                              fit: BoxFit.contain,
-                            );
-                          },
+                              return Image.memory(
+                                snapshot.data!,
+                                fit: BoxFit.contain,
+                              );
+                            },
+                          ),
                         ),
-                      ),
+                ),
               ),
-            ),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _pickImage,
-                icon: const Icon(Icons.photo),
-                label: const Text("Pick Image"),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            if (_caption.isEmpty)
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: _isLoading ? null : _generateCaption,
-                  icon: const Icon(Icons.auto_awesome),
-                  label: const Text("Generate Caption"),
+                  onPressed: _pickImage,
+                  icon: const Icon(Icons.photo),
+                  label: const Text("Pick Image"),
                 ),
               ),
 
-            const SizedBox(height: 25),
+              const SizedBox(height: 12),
 
-            if (_isLoading) const CircularProgressIndicator(),
-
-            if (!_isLoading && _caption.isNotEmpty)
-              Card(
-                elevation: 5,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    _caption,
-                    style: const TextStyle(fontSize: 18),
-                    textAlign: TextAlign.center,
+              if (_caption.isEmpty)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : _generateCaption,
+                    icon: const Icon(Icons.auto_awesome),
+                    label: const Text("Generate Caption"),
                   ),
                 ),
-              ),
-            if (_hashtags.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Card(
+
+              const SizedBox(height: 25),
+
+              if (_isLoading) const CircularProgressIndicator(),
+
+              if (!_isLoading && _caption.isNotEmpty)
+                Card(
                   elevation: 5,
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Hashtags",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: _hashtags.map((tag) {
-                            return Chip(label: Text(tag));
-                          }).toList(),
-                        ),
-                      ],
+                    child: Text(
+                      _caption,
+                      style: const TextStyle(fontSize: 18),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-              ),
-            if (!_isLoading && _caption.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _copyCaption,
-                        icon: const Icon(Icons.copy),
-                        label: const Text(""),
+              if (_hashtags.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Card(
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Hashtags",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: _hashtags.map((tag) {
+                              return Chip(label: Text(tag));
+                            }).toList(),
+                          ),
+                        ],
                       ),
                     ),
-
-                    const SizedBox(width: 12),
-
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: _shareCaption,
-                        icon: const Icon(Icons.share),
-                        label: const Text(""),
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: _isLoading ? null : _generateCaption,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text(""),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              if (_emojis.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Card(
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Emojis",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
 
-            const SizedBox(height: 20),
-          ],
+                          const SizedBox(height: 12),
+
+                          Center(
+                            child: Text(
+                              _emojis.join(" "),
+                              style: const TextStyle(fontSize: 32),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              if (!_isLoading && _caption.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _copyCaption,
+                          icon: const Icon(Icons.copy),
+                          label: const Text(""),
+                        ),
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: _shareCaption,
+                          icon: const Icon(Icons.share),
+                          label: const Text(""),
+                        ),
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      Expanded(
+                        child: FilledButton.icon(
+                          onPressed: _isLoading ? null : _generateCaption,
+                          icon: const Icon(Icons.refresh),
+                          label: const Text(""),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
