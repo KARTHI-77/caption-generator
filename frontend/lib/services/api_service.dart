@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import '../models/caption_response.dart';
 
 class ApiService {
-  static const String baseUrl = "http://10.79.40.231:5000";
+  static const String baseUrl = "http://10.146.44.231:5000";
   static const String endpoint = "$baseUrl/caption";
 
   static Future<CaptionResponse> generateCaption(
