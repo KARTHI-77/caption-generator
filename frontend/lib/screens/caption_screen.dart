@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/caption_model.dart';
 import '../services/caption_firestore_service.dart';
 import 'profile_screen.dart';
+import 'dart:async';
 
 class CaptionScreen extends StatefulWidget {
   const CaptionScreen({super.key});
@@ -35,6 +36,17 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
   bool _isLoading = false;
 
+  final List<String> _loadingMessages = [
+    "🖼️ Analyzing image...",
+    "🧠 Understanding content...",
+    "✍️ Writing caption...",
+    "🏷️ Generating hashtags...",
+    "😊 Selecting emojis...",
+  ];
+  int _loadingIndex = 0;
+
+  Timer? _loadingTimer;
+
   final List<String> _languages = [
     "English",
     "Tamil",
@@ -60,6 +72,24 @@ class _CaptionScreenState extends State<CaptionScreen> {
     }
   }
 
+  void _startLoadingAnimation() {
+    _loadingIndex = 0;
+
+    _loadingTimer?.cancel();
+
+    _loadingTimer = Timer.periodic(const Duration(milliseconds: 700), (timer) {
+      if (!mounted) return;
+
+      setState(() {
+        _loadingIndex = (_loadingIndex + 1) % _loadingMessages.length;
+      });
+    });
+  }
+
+  void _stopLoadingAnimation() {
+    _loadingTimer?.cancel();
+  }
+
   Future<void> _generateCaption() async {
     if (_image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -70,7 +100,10 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
     setState(() {
       _isLoading = true;
+      _loadingIndex = 0;
     });
+
+    _startLoadingAnimation();
 
     try {
       final response = await ApiService.generateCaption(
@@ -101,6 +134,8 @@ class _CaptionScreenState extends State<CaptionScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text("Error: $e")));
     } finally {
+      _stopLoadingAnimation();
+
       setState(() {
         _isLoading = false;
       });
@@ -158,6 +193,11 @@ class _CaptionScreenState extends State<CaptionScreen> {
   }
 
   @override
+  void dispose() {
+    _loadingTimer?.cancel();
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -397,7 +437,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
           if (_isLoading)
             Container(
               color: Colors.black54,
-              child: const Center(
+              child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -416,9 +456,17 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
                     SizedBox(height: 8),
 
-                    Text(
-                      "Please wait a moment...",
-                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      child: Text(
+                        _loadingMessages[_loadingIndex],
+                        key: ValueKey<int>(_loadingIndex),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                 ),
