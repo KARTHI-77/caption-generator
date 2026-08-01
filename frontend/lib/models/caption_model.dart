@@ -4,6 +4,7 @@ class CaptionModel {
   final String id;
   final String caption;
   final List<String> hashtags;
+  final List<String> emojis;
   final String style;
   final String language;
   final String imageUrl;
@@ -14,6 +15,7 @@ class CaptionModel {
     required this.id,
     required this.caption,
     required this.hashtags,
+    required this.emojis,
     required this.style,
     required this.language,
     required this.imageUrl,
@@ -25,6 +27,7 @@ class CaptionModel {
     return {
       "caption": caption,
       "hashtags": hashtags,
+      "emojis": emojis,
       "style": style,
       "language": language,
       "imageUrl": imageUrl,
@@ -41,6 +44,7 @@ class CaptionModel {
       id: id,
       caption: map["caption"] ?? "",
       hashtags: List<String>.from(map["hashtags"] ?? []),
+      emojis: List<String>.from(map["emojis"] ?? []),
       style: map["style"] ?? "",
       language: map["language"] ?? "",
       imageUrl: map["imageUrl"] ?? "",

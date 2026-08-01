@@ -122,6 +122,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
           id: "",
           caption: _caption,
           hashtags: _hashtags,
+          emojis: _emojis,
           style: _selectedStyle,
           language: _selectedLanguage,
           imageUrl: "",
@@ -198,6 +199,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
