@@ -71,6 +71,29 @@ class HistoryScreen extends StatelessWidget {
 
                       const SizedBox(height: 15),
 
+                      if ((data["emojis"] as List?)?.isNotEmpty ?? false) ...[
+                        const SizedBox(height: 16),
+
+                        const Text(
+                          "Emojis",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        Center(
+                          child: Text(
+                            (data["emojis"] as List)
+                                .map((e) => e.toString())
+                                .join(" "),
+                            style: const TextStyle(fontSize: 30),
+                          ),
+                        ),
+                      ],
+
                       Row(
                         children: [
                           Chip(label: Text(data["style"] ?? "")),
@@ -104,9 +127,21 @@ class HistoryScreen extends StatelessWidget {
                                       .join(" ") ??
                                   "";
 
+                              final emojis =
+                                  (data["emojis"] as List?)
+                                      ?.map((e) => e.toString())
+                                      .join(" ") ??
+                                  "";
+
                               await Clipboard.setData(
                                 ClipboardData(
-                                  text: "${data["caption"]}\n\n$hashtags",
+                                  text: [
+                                    data["caption"] ?? "",
+                                    "",
+                                    hashtags,
+                                    "",
+                                    emojis,
+                                  ].join("\n"),
                                 ),
                               );
 
@@ -129,8 +164,20 @@ class HistoryScreen extends StatelessWidget {
                                       .join(" ") ??
                                   "";
 
+                              final emojis =
+                                  (data["emojis"] as List?)
+                                      ?.map((e) => e.toString())
+                                      .join(" ") ??
+                                  "";
+
                               await Share.share(
-                                "${data["caption"]}\n\n$hashtags",
+                                [
+                                  data["caption"] ?? "",
+                                  "",
+                                  hashtags,
+                                  "",
+                                  emojis,
+                                ].join("\n"),
                                 subject: "AI Generated Caption",
                               );
                             },
