@@ -13,12 +13,14 @@ class ApiService {
     XFile image,
     String style,
     String language,
+    String platform,
   ) async {
     final uri = Uri.parse(endpoint);
 
     final request = http.MultipartRequest("POST", uri);
     request.fields["style"] = style;
     request.fields["language"] = language;
+    request.fields["platform"] = platform;
 
     if (kIsWeb) {
       final bytes = await image.readAsBytes();
