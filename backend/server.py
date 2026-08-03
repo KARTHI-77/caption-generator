@@ -34,6 +34,7 @@ def caption():
         image_file = request.files["image"]
         style = request.form.get("style","Short & Crispy",)
         language = request.form.get("language","English",)
+        platform = request.form.get("platform", "General")
 
         image = Image.open(image_file.stream)
 
@@ -104,20 +105,78 @@ def caption():
          Elegant and expressive.
          """,
         }
+
+        PLATFORM_PROMPTS = {
+
+         "General": """
+         Write a natural caption suitable for any social media platform.
+         """,
+
+         "Instagram": """
+         Write an engaging Instagram caption.
+
+         Keep it trendy.
+
+         Encourage engagement.
+
+         Use a friendly tone.
+
+         No hashtags.
+         """,
+
+         "LinkedIn": """
+         Write a professional LinkedIn caption.
+
+         Keep it inspiring and career-focused.
+
+         Use a professional tone.
+
+         No hashtags.
+         """,
+
+         "Facebook": """
+         Write a friendly Facebook caption.
+
+         Slightly longer than Instagram.
+
+         Encourage conversation.
+
+         No hashtags.
+         """,
+
+         "X (Twitter)": """
+         Write a short caption.
+
+         Maximum 280 characters.
+
+         Make it punchy.
+
+         No hashtags.
+         """,
+
+         "WhatsApp": """
+         Write a casual status update.
+
+         Keep it simple.
+
+         No hashtags.
+         """,
+        }
+
         prompt = f"""
          {PROMPTS[style]}
 
+         {PLATFORM_PROMPTS[platform]}
+
          Generate the caption in {language}.
 
-         Generate ONE caption.
+         Generate ONLY ONE caption.
 
-         Every time this request is made, create a DIFFERENT caption.
+         Every request should generate a DIFFERENT caption.
 
-         Do not repeat previous captions.
+         Do not include hashtags.
 
-         Keep the same style.
-
-         Return only the caption..
+         Return only the caption text.
          """
 
         response = client.models.generate_content(
