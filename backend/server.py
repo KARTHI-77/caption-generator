@@ -189,33 +189,55 @@ def caption():
         
         caption = response.text.strip().replace('"', "")
 
-        def generate_emojis(caption: str):
-            """
-            Generate 3-5 relevant emojis for a caption using Gemini.
-            """
+        def generate_emojis(caption: str,platform: str,):
+           emoji_response = client.models.generate_content(
+           model="gemini-2.5-flash",
+           contents=f"""
+            Caption:
+            {caption}
 
-            emoji_response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=f"""
-                Caption:
-                {caption}
+           Platform:
+           {platform}
 
-                Generate ONLY 3 to 5 emojis that best match this caption.
+           Generate emojis that fit this platform.
 
-                Rules:
-                - Return emojis only.
-                - No words.
-                - No numbering.
-                - Separate emojis with spaces.
+           Rules:
 
-                Example:
-                🌅 ✨ ❤️ 📸
-                """,
-            )
-            emoji_text = emoji_response.text.strip()
-            return emoji_text.split()
+           Instagram:
+           4-6 expressive emojis
 
-        def generate_hashtags(caption: str):
+           LinkedIn:
+           Maximum 2 professional emojis
+
+           Facebook:
+           2-4 emojis
+
+           X (Twitter):
+           1-2 emojis
+
+           WhatsApp:
+           2-3 casual emojis
+
+           General:
+           3-4 emojis
+
+           Return ONLY emojis separated by spaces.
+           """,
+        )
+           emoji_text = emoji_response.text.strip()
+           return emoji_text.split()
+
+        def generate_hashtags(caption: str, platform: str):
+            HASHTAG_LIMITS = {
+             "Instagram": 10,
+             "LinkedIn": 3,
+             "Facebook": 5,
+             "X (Twitter)": 2,
+             "WhatsApp": 1,
+             "General": 6,
+            }
+
+            limit = HASHTAG_LIMITS.get(platform, 6)
             """
             Generate simple hashtags from a caption.
             """
@@ -244,10 +266,10 @@ def caption():
                 if tag not in hashtags:
                     hashtags.append(tag)
 
-            return hashtags[:8]
+            return hashtags[:limit]
 
-        hashtags = generate_hashtags(caption)
-        emojis = generate_emojis(caption)
+        hashtags = generate_hashtags(caption,platform,)
+        emojis = generate_emojis(caption,platform,)
 
         return jsonify({
          "generated_text": caption,
