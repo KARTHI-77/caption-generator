@@ -58,13 +58,13 @@ class _CaptionScreenState extends State<CaptionScreen> {
   ];
 
   final List<String> _platforms = [
-  "General",
-  "Instagram",
-  "LinkedIn",
-  "Facebook",
-  "X (Twitter)",
-  "WhatsApp",
-];
+    "General",
+    "Instagram",
+    "LinkedIn",
+    "Facebook",
+    "X (Twitter)",
+    "WhatsApp",
+  ];
 
   String _selectedLanguage = "English";
   String _selectedPlatform = "General";
@@ -282,27 +282,27 @@ class _CaptionScreenState extends State<CaptionScreen> {
                   const SizedBox(height: 20),
 
                   DropdownButtonFormField<String>(
-  initialValue: _selectedPlatform,
-  decoration: InputDecoration(
-    labelText: "Platform",
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-  ),
-  items: _platforms.map((platform) {
-    return DropdownMenuItem(
-      value: platform,
-      child: Text(platform),
-    );
-  }).toList(),
-  onChanged: (value) {
-    setState(() {
-      _selectedPlatform = value!;
-    });
-  },
-),
+                    initialValue: _selectedPlatform,
+                    decoration: InputDecoration(
+                      labelText: "Platform",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    items: _platforms.map((platform) {
+                      return DropdownMenuItem(
+                        value: platform,
+                        child: Text(platform),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedPlatform = value!;
+                      });
+                    },
+                  ),
 
-const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   SizedBox(
                     height: 250,

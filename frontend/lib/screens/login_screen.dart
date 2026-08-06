@@ -23,13 +23,9 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.toString(),
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
 
     if (mounted) {
@@ -48,7 +44,6 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: const EdgeInsets.all(30),
             child: Column(
               children: [
-
                 const Icon(
                   Icons.auto_awesome,
                   size: 90,
@@ -59,18 +54,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const Text(
                   "AI Social Media",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
 
                 const Text(
                   "Content Assistant",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 20),
@@ -78,18 +67,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Text(
                   "Generate amazing captions\nusing Artificial Intelligence",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
 
                 const SizedBox(height: 60),
 
-                GoogleSignButton(
-                  onPressed: _login,
-                  isLoading: _loading,
-                ),
+                GoogleSignButton(onPressed: _login, isLoading: _loading),
               ],
             ),
           ),

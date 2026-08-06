@@ -32,22 +32,22 @@ class GoogleSignButton extends StatelessWidget {
                 child: CircularProgressIndicator(),
               )
             : const FittedBox(
-               fit: BoxFit.scaleDown,
-               child: Row(
-                 mainAxisSize: MainAxisSize.min,
-                 children: [
-                   Icon(Icons.login),
-                   SizedBox(width: 12),
-                   Text(
-                     "Continue with Google",
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.login),
+                    SizedBox(width: 12),
+                    Text(
+                      "Continue with Google",
                       style: TextStyle(
-                       fontSize: 16,
-                       fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                 ],
+                  ],
                 ),
-              )
+              ),
       ),
     );
   }

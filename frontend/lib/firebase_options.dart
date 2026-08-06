@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1041483068387',
     projectId: 'caption-generator-ai-f6d82',
     storageBucket: 'caption-generator-ai-f6d82.firebasestorage.app',
-    iosClientId: '1041483068387-73idi2f43mnj8017ep97isq59j8kuf5g.apps.googleusercontent.com',
+    iosClientId:
+        '1041483068387-73idi2f43mnj8017ep97isq59j8kuf5g.apps.googleusercontent.com',
     iosBundleId: 'com.example.captionGenerator',
   );
 
@@ -73,7 +74,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1041483068387',
     projectId: 'caption-generator-ai-f6d82',
     storageBucket: 'caption-generator-ai-f6d82.firebasestorage.app',
-    iosClientId: '1041483068387-73idi2f43mnj8017ep97isq59j8kuf5g.apps.googleusercontent.com',
+    iosClientId:
+        '1041483068387-73idi2f43mnj8017ep97isq59j8kuf5g.apps.googleusercontent.com',
     iosBundleId: 'com.example.captionGenerator',
   );
 

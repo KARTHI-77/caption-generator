@@ -14,24 +14,16 @@ class ProfileScreen extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profile"),
-      ),
+      appBar: AppBar(title: const Text("Profile")),
       body: FutureBuilder<Map<String, dynamic>>(
         future: CaptionFirestoreService.instance.getProfileStats(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                "Error: ${snapshot.error}",
-              ),
-            );
+            return Center(child: Text("Error: ${snapshot.error}"));
           }
 
           final stats = snapshot.data!;
@@ -40,17 +32,13 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-
                 CircleAvatar(
                   radius: 55,
                   backgroundImage: user.photoURL != null
                       ? NetworkImage(user.photoURL!)
                       : null,
                   child: user.photoURL == null
-                      ? const Icon(
-                          Icons.person,
-                          size: 50,
-                        )
+                      ? const Icon(Icons.person, size: 50)
                       : null,
                 ),
 
@@ -68,9 +56,7 @@ class ProfileScreen extends StatelessWidget {
 
                 Text(
                   user.email ?? "",
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600),
                 ),
 
                 const SizedBox(height: 35),
@@ -83,7 +69,6 @@ class ProfileScreen extends StatelessWidget {
                   crossAxisSpacing: 15,
                   childAspectRatio: 1.0,
                   children: [
-
                     StatCard(
                       title: "Captions",
                       value: stats["totalCaptions"].toString(),
@@ -129,15 +114,10 @@ class ProfileScreen extends StatelessWidget {
                 const Divider(),
 
                 ListTile(
-                  leading: const Icon(
-                    Icons.logout,
-                    color: Colors.red,
-                  ),
+                  leading: const Icon(Icons.logout, color: Colors.red),
                   title: const Text(
                     "Logout",
-                    style: TextStyle(
-                      color: Colors.red,
-                    ),
+                    style: TextStyle(color: Colors.red),
                   ),
                   onTap: () async {
                     await AuthService.instance.signOut();

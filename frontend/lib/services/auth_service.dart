@@ -20,8 +20,7 @@ class AuthService {
   Future<UserCredential?> signInWithGoogle() async {
     try {
       // User selects Google account
-      final GoogleSignInAccount? googleUser =
-          await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
         return null;
@@ -37,8 +36,7 @@ class AuthService {
       );
 
       // Firebase Sign In
-      final userCredential =
-          await _auth.signInWithCredential(credential);
+      final userCredential = await _auth.signInWithCredential(credential);
 
       // Create Firestore user document
       await _createUserDocument(userCredential.user);

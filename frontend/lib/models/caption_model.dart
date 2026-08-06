@@ -36,10 +36,7 @@ class CaptionModel {
     };
   }
 
-  factory CaptionModel.fromMap(
-    String id,
-    Map<String, dynamic> map,
-  ) {
+  factory CaptionModel.fromMap(String id, Map<String, dynamic> map) {
     return CaptionModel(
       id: id,
       caption: map["caption"] ?? "",
