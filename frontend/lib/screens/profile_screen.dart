@@ -5,6 +5,8 @@ import '../services/auth_service.dart';
 import '../services/caption_firestore_service.dart';
 import '../widgets/stat_card.dart';
 import '../screens/history_screen.dart';
+import 'package:provider/provider.dart';
+import '../providers/theme_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -69,6 +71,16 @@ class ProfileScreen extends StatelessWidget {
                   crossAxisSpacing: 15,
                   childAspectRatio: 1.0,
                   children: [
+                    Card(
+                      child: SwitchListTile(
+                        secondary: const Icon(Icons.dark_mode),
+                        title: const Text("Dark Mode"),
+                        value: context.watch<ThemeProvider>().isDarkMode,
+                        onChanged: (value) {
+                          context.read<ThemeProvider>().toggleTheme(value);
+                        },
+                      ),
+                    ),
                     StatCard(
                       title: "Captions",
                       value: stats["totalCaptions"].toString(),
