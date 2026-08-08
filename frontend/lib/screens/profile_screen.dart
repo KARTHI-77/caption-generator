@@ -16,7 +16,34 @@ class ProfileScreen extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Profile")),
+      appBar: AppBar(
+        title: const Text("Profile"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Row(
+              children: [
+                const Icon(Icons.dark_mode, size: 21),
+
+                const SizedBox(width: 4),
+
+                Switch(
+                  value: context.watch<ThemeProvider>().isDarkMode,
+                  onChanged: (value) {
+                    context.read<ThemeProvider>().toggleTheme(value);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: CaptionFirestoreService.instance.getProfileStats(),
         builder: (context, snapshot) {
@@ -71,16 +98,6 @@ class ProfileScreen extends StatelessWidget {
                   crossAxisSpacing: 15,
                   childAspectRatio: 1.0,
                   children: [
-                    Card(
-                      child: SwitchListTile(
-                        secondary: const Icon(Icons.dark_mode),
-                        title: const Text("Dark Mode"),
-                        value: context.watch<ThemeProvider>().isDarkMode,
-                        onChanged: (value) {
-                          context.read<ThemeProvider>().toggleTheme(value);
-                        },
-                      ),
-                    ),
                     StatCard(
                       title: "Captions",
                       value: stats["totalCaptions"].toString(),
