@@ -26,6 +26,22 @@ client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
 
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({
+        "status": "success",
+        "message": "Caption Generator API is running"
+    })
+
+@app.route("/routes", methods=["GET"])
+def routes():
+    return jsonify([
+        {
+            "path": rule.rule,
+            "methods": sorted(rule.methods)
+        }
+        for rule in app.url_map.iter_rules()
+    ])
 
 @app.route("/caption", methods=["POST"])
 def caption():
