@@ -1,6 +1,6 @@
 {
-    "name": "caption_generator",
-    "short_name": "caption_generator",
+    "name": "Caption Generator",
+    "short_name": "Caption Generator",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -27,7 +27,7 @@
     package, as it handles file caching internally. -->
 
     <application
-        android:label="caption_generator"
+        android:label="Caption Generator"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true" 
