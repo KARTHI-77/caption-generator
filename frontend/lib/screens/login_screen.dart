@@ -53,12 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 30),
 
                 const Text(
-                  "AI Social Media",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                ),
-
-                const Text(
-                  "Content Assistant",
+                  "Caption Generator",
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
 
