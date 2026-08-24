@@ -36,7 +36,7 @@ class ProfileScreen extends StatelessWidget {
                 Switch(
                   value: context.watch<ThemeProvider>().isDarkMode,
                   onChanged: (value) {
-                    context.read<ThemeProvider>().toggleTheme(value);
+                    context.read<ThemeProvider>().toggleTheme();
                   },
                 ),
               ],
