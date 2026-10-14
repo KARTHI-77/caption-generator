@@ -73,17 +73,6 @@ def caption():
          Return only the caption.
         """,
 
-         "Instagram":
-         """
-         Generate an Instagram caption.
-
-         Maximum 20 words.
-
-         Catchy and engaging.
-
-         No hashtags.
-         """,
-
          "Funny":
          """
          Generate a funny caption.

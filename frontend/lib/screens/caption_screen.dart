@@ -25,7 +25,6 @@ class _CaptionScreenState extends State<CaptionScreen> {
   List<String> _emojis = [];
   final List<String> _captionStyles = [
     "Short & Crispy",
-    "Instagram",
     "Funny",
     "Professional",
     "Travel",
