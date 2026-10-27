@@ -96,7 +96,7 @@ class ProfileScreen extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   mainAxisSpacing: 15,
                   crossAxisSpacing: 15,
-                  childAspectRatio: 1.0,
+                  childAspectRatio: 0.85,
                   children: [
                     StatCard(
                       title: "Captions",

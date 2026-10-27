@@ -50,8 +50,8 @@ class _CaptionScreenState extends State<CaptionScreen> {
     "English",
     "Tamil",
     "Hindi",
-    "French",
-    "Spanish",
+    "Malayalam",
+    "Telugu",
     "German",
     "Japanese",
   ];
